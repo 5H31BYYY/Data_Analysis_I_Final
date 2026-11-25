@@ -1,0 +1,7 @@
+,,0
+infant_deaths,under_five_deaths,0.997
+thinness_1_19_years,thinness_5_9_years,0.939
+income_composition_of_resources,schooling,0.919
+percentage_expenditure,gdp,0.893
+bmi,income_composition_of_resources,0.783
+bmi,schooling,0.727
