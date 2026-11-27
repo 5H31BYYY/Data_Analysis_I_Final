@@ -33,7 +33,7 @@
     \column{0.5\textwidth}
     \begin{itemize}
       \item \textbf{Task:} supervised regression
-      \item \textbf{After cleaning:} 2,928 rows, 183 countries, 24 columns
+      \item \textbf{After cleaning:} 2,928 rows, 183 countries, 22 columns (+2 for EDA)
       \item \textbf{Issues:} missing values, implausible values, skewed features
     \end{itemize}
   \end{columns}
@@ -67,7 +67,7 @@
     \column{0.52\textwidth}
     \begin{itemize}
       \item IQR flags 15--19\% of rows for measles, HIV/AIDS, GDP, population
-      \item These are genuine (large or severely affected countries) $\Rightarrow$ \textbf{kept}
+      \item These are genuine (large or severely affected countries) $\implies$ \textbf{kept}
       \item Instead, \textbf{$\log(1+x)$} on 9 skewed features
     \end{itemize}
     \column{0.48\textwidth}
@@ -86,7 +86,7 @@
 
 \begin{frame}{EDA: the development gap}
   \centering
-  \includegraphics[width=0.92\textwidth]{figs/target_distribution.pdf}
+  \includegraphics[width=1\textwidth]{figs/target_distribution.pdf}
   \begin{itemize}\small
     \item Mean 69.2 years, SD 9.5, left-skewed: a long tail of low values
     \item \textbf{Developed 79.2 vs.\ Developing 67.1} years (Welch $t=47.9$, $p<0.001$)
@@ -119,15 +119,18 @@
 \note{All three hypotheses are supported by the exploratory analysis. Later we check whether the models agree.}
 
 \begin{frame}{Modeling pipeline}
-  \centering
-  \begin{tikzpicture}[node distance=0.45cm, every node/.style={draw=aupp,fill=aupp!10,rounded corners=3pt,minimum width=2.8cm,minimum height=1.3cm,align=center,font=\small}]
-    \node (a) {Split \textbf{by country}\\{\footnotesize 80/20: 146 / 37 countries}};
-    \node[right=of a] (b) {Scale\\{\footnotesize fit on train only}};
-    \node[right=of b] (c) {Train 4 models\\{\footnotesize + mean baseline}};
-    \node[right=of c] (d) {Evaluate\\{\footnotesize 5-fold grouped CV + test}};
-    \draw[-{Stealth},thick,aupp] (a)--(b); \draw[-{Stealth},thick,aupp] (b)--(c); \draw[-{Stealth},thick,aupp] (c)--(d);
-  \end{tikzpicture}
-  \vspace{0.3cm}
+  \begin{center}
+    \resizebox{\textwidth}{!}{%
+      \begin{tikzpicture}[node distance=0.45cm, every node/.style={draw=aupp,fill=aupp!10,rounded corners=3pt,minimum width=2.8cm,minimum height=1.3cm,align=center,font=\small}]
+        \node (a) {Split \textbf{by country}\\{\footnotesize 80/20: 146 / 37 countries}};
+        \node[right=of a] (b) {Scale\\{\footnotesize fit on train only}};
+        \node[right=of b] (c) {Train 4 models\\{\footnotesize + mean baseline}};
+        \node[right=of c] (d) {Evaluate\\{\footnotesize 5-fold grouped CV + test}};
+        \draw[-{Stealth},thick,aupp] (a)--(b); \draw[-{Stealth},thick,aupp] (b)--(c); \draw[-{Stealth},thick,aupp] (c)--(d);
+      \end{tikzpicture}%
+    }
+  \end{center}
+  \vspace{0.2cm}
   \begin{itemize}\small
     \item 18 features; two near-duplicates dropped (under-five deaths, thinness 5--9)
     \item Linear, Ridge ($\alpha=10$ by grouped CV), Random Forest (300 trees), Gradient Boosting
@@ -138,8 +141,8 @@
 
 \begin{frame}{Results: model comparison}
   \begin{columns}[T]
-    \column{0.6\textwidth}
-    \centering\footnotesize
+    \column{0.62\textwidth}
+    \centering\footnotesize\setlength{\tabcolsep}{4pt}
     \begin{tabular}{lcccc}\toprule
       \textbf{Model} & \textbf{CV RMSE} & \textbf{Test RMSE} & \textbf{MAE} & \textbf{$R^2$}\\\midrule
       Baseline (mean) & -- & 9.95 & 7.98 & $-0.06$\\
@@ -148,22 +151,22 @@
       Random Forest & 3.00 & 2.65 & 1.93 & 0.925\\
       Gradient Boosting & 3.01 & \textbf{2.59} & 1.95 & \textbf{0.928}\\\bottomrule
     \end{tabular}
-    \column{0.4\textwidth}
+    \column{0.38\textwidth}
     \begin{itemize}\small
       \item Best: \textbf{Gradient Boosting}, error cut by 74\% vs.\ baseline
       \item Tree ensembles beat linear models by about 20\%
       \item RF and GB are nearly tied
     \end{itemize}
   \end{columns}
-  \vspace{0.2cm}
+  \vspace{0.15cm}
   \centering
-  \includegraphics[width=0.85\textwidth]{figs/model_comparison.pdf}
+  \includegraphics[width=0.86\textwidth]{figs/model_comparison.pdf}
 \end{frame}
 \note{All models beat the baseline. Gradient Boosting has the lowest test error, but Random Forest is within 0.06 years and has a slightly lower cross-validation error, so we do not claim a clear winner. Test error is lower than CV error because the test set has only 37 countries.}
 
 \begin{frame}{Predicted vs.\ actual (Gradient Boosting)}
   \centering
-  \includegraphics[width=0.9\textwidth]{figs/pred_vs_actual_residuals.pdf}
+  \includegraphics[width=0.88\textwidth]{figs/pred_vs_actual_residuals.pdf}
   \begin{itemize}\small
     \item Typical error about \textbf{2 years} (MAE 1.95) against an SD of 9.5
     \item Most residuals within $\pm5$ years; mean residual $-0.7$ (slight over-prediction)

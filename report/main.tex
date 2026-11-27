@@ -47,9 +47,6 @@
 \cfoot{\thepage}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\newcommand{\figplaceholder}[2]{%
-  \begin{center}\fbox{\parbox[c][#1][c]{0.85\textwidth}{\centering\color{gray}\itshape #2}}\end{center}}
-
 \begin{document}
 %==================== COVER ====================
 \pagenumbering{gobble}
@@ -61,7 +58,7 @@
 \vspace{2cm}
 {\large\textbf{Course:} Data Analysis I\\[4pt]
 \textbf{Lecturer:} Dr.\ HAS Sothea\\[4pt]
-\textbf{Semester:} Fall 2026}\\[1.5cm]
+\textbf{Semester:} Fall 2027}\\[1.5cm]
 {\large\textbf{Team Members}\\[4pt]
 KHOV Seangngy (2026571) \\
 PHAUT Sovannvatanak (2026525) }\\[1.5cm]
@@ -108,7 +105,7 @@ The specific objectives are:
 \textbf{Item} & \textbf{Description}\\\midrule
 Source & Kaggle -- Life Expectancy (WHO) (Kumar Rajarshi), compiled from WHO and United Nations data. \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}\\
 Coverage & 193 countries, 2000--2015 (183 countries remain after cleaning); one row per country per year\\
-Size & 2938 rows $\times$ 22 columns (before cleaning); 2928 rows $\times$ 24 columns (after cleaning)\\
+Size & 2938 rows $\times$ 22 columns (raw); 2928 rows $\times$ 24 columns (cleaned + 2 engineered for EDA)\\
 Target & \texttt{life\_expectancy} (years)\\
 Quantitative & 18 numeric predictors (plus target \texttt{life\_expectancy}), e.g.\ \texttt{adult\_mortality}, \texttt{bmi}, \texttt{gdp}, \texttt{schooling}\\
 Qualitative & \texttt{country}, \texttt{status} (Developed/Developing); \texttt{year} is ordinal; engineered: \texttt{period}, \texttt{income\_tier}\\
@@ -136,7 +133,7 @@ Key observations from the inspection:
         for a national average), \texttt{adult\_mortality} has a minimum of 1,
         \texttt{measles} reaches 212,183 although it is reported per 1000
         population, \texttt{percentage\_expenditure} reaches 19,480 although it is
-        a percentage, \texttt{population} has a minimum of 34, and
+        a percentage, \texttt{population} has a minimum of 34, and \\
         \texttt{income\_composition\_of\_resources} and \texttt{schooling} have
         minimum values of 0. These are handled in
         Section~\ref{sec:invalid}.
@@ -235,7 +232,7 @@ adult\_mortality & 10 & 0.34\\\bottomrule
         Developing (15.7\%) countries.
 \end{itemize}
 Because missingness depends on observed variables (country, year and status), the data is
-treated as Missing At Random (MAR) rather than Missing Completely At Random.
+treated as Missing At Random (MAR) rather than Missing Completely At Random (MCAR).
 The 10 rows with missing \texttt{life\_expectancy} are exactly the 10 rows with missing
 \texttt{adult\_mortality}.
 
@@ -336,7 +333,8 @@ For modeling, \texttt{status} was encoded as a binary variable (Developing = 0, 
 and the nine skewed features listed in Table~\ref{tab:skew} were log-transformed.
 \texttt{period} and \texttt{income\_tier} were not used as model inputs because they
 are derived from \texttt{year} and \texttt{gdp}, and \texttt{country} was used only to
-group the train/test split. The final cleaned dataset has 2928 rows and 24 columns.
+group the train/test split. Including the two engineered features, the final cleaned dataset has
+2928 rows and 24 columns (22 after cleaning + 2 engineered for EDA).
 
 %==================== III. EDA ====================
 \section{Exploratory Data Analysis (EDA)}
@@ -383,7 +381,7 @@ Mean life expectancy increases with GDP tier: 62.75 years (Low), 68.98 (Medium) 
 and with time: 67.26 (2000--04), 69.06 (2005--09) and 71.00 (2010--15). The group differences are
 statistically significant: Welch $t=47.87$ for status ($p<0.001$), ANOVA $F=39.70$ for period
 ($p<0.001$) and $F=691.15$ for GDP tier ($p<0.001$). \texttt{status} and \texttt{income\_tier} are also
-strongly associated with each other (chi-square $=592.75$, 2 df, $p<0.001$), so the two carry
+strongly associated with each other ($\chi^2=592.75$, 2 df, $p<0.001$), so the two carry
 overlapping information.
 
 \subsection{Correlation Analysis}
@@ -480,6 +478,8 @@ Only \texttt{income\_composition\_of\_resources} exceeds the common threshold of
 remaining features not shown in the table are below 2.5. Both it and \texttt{schooling} were kept, since they are of
 substantive interest and Ridge and tree models tolerate collinearity, but their coefficients must
 be interpreted together.
+
+\newpage
 
 \subsection{Splitting and Scaling}
 The data was split 80/20 \emph{by country} (\texttt{GroupShuffleSplit}, \texttt{random\_state=42}),

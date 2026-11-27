@@ -5,8 +5,8 @@ income_composition_of_resources == 0,130,"set to NaN, impute"
 population < 1000,30,"set to NaN, impute"
 infant_deaths == 0 with population > 1M,174,"set to NaN, impute"
 under_five_deaths == 0 with population > 1M,151,"set to NaN, impute"
-under_five_deaths < infant_deaths,0,"flag only, log-transform"
+under_five_deaths < infant_deaths,0,flag only
 measles > 1000 (reported per 1000 pop.),525,"flag only, log-transform"
 percentage_expenditure > 100 (%),1301,"flag only, log-transform"
-adult_mortality < 10,86,"flag only, log-transform"
-immunization coverage > 100,0,"flag only, log-transform"
+adult_mortality < 10,86,flag only
+immunization coverage > 100,0,none
