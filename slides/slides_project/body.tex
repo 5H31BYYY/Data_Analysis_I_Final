@@ -40,27 +40,41 @@
 \end{frame}
 \note{The data come from WHO via Kaggle. One row is one country in one year. Ten rows had no target value and were dropped, which removed ten countries.}
 
-\begin{frame}{Data cleaning: missing and invalid values}
-  \begin{columns}[T]
-    \column{0.55\textwidth}
-    \textbf{\color{aupp}Missing values} (14 of 22 columns)
+\begin{frame}{Data cleaning: missing values}
+  \begin{columns}[c]
+    \column{0.44\textwidth}
+    \textbf{\color{aupp}14 of 22 columns have gaps}
     \begin{itemize}\small
       \item Population 22\%, hepatitis B 19\%, GDP 15\%
       \item Missing every observed year: population (48), GDP (30)
       \item Hepatitis B gaps: 98 rows (2000) $\to$ 9 (2015), so MAR
       \item Imputed: country median, then status median
     \end{itemize}
-    \textbf{\color{aupp}Invalid values} (set to missing, then imputed)
-    \begin{itemize}\small
-      \item BMI outside 10--60: 629 rows; zero schooling: 26; zero income composition: 130
-      \item Zero deaths with population $>$ 1M: 174 and 151
-    \end{itemize}
-    \column{0.45\textwidth}
+    \column{0.56\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figs/missing_values_bar.pdf}
   \end{columns}
 \end{frame}
-\note{Missingness is not random: many countries are absent for every year, so we used the country median where possible and the status median otherwise. Impossible values such as BMI of 1 or 87 were set to missing and imputed. BMI stays a weak variable.}
+\note{Missingness is not random: many countries are absent in every year they appear, so we used the country median where possible and the status median otherwise.}
+
+\begin{frame}{Data cleaning: invalid values}
+  \centering\small
+  \renewcommand{\arraystretch}{1.35}
+  \begin{tabularx}{0.92\textwidth}{Xrl}\toprule
+    \textbf{Invalid-value rule} & \textbf{Rows} & \textbf{Action}\\\midrule
+    BMI outside 10--60 & 629 & Set to NaN, impute\\
+    Zero deaths with population $>$ 1M (infant / under-5) & 174 / 151 & Set to NaN, impute\\
+    Zero income composition of resources & 130 & Set to NaN, impute\\
+    Population $<$ 1,000 & 30 & Set to NaN, impute\\
+    Zero schooling & 26 & Set to NaN, impute\\\bottomrule
+  \end{tabularx}
+  \vspace{0.35cm}
+  \begin{itemize}\small
+    \item Impossible values were replaced with NaN before median imputation
+    \item \textbf{BMI} is the most affected (21.5\% implausible) and stays a weak variable
+  \end{itemize}
+\end{frame}
+\note{Impossible values such as BMI of 1 or 87, or zero infant deaths in countries over 1 million people, were set to missing and imputed. BMI remains noisy even after cleaning.}
 
 \begin{frame}{Outliers and skewness}
   \begin{columns}[T]
@@ -140,29 +154,35 @@
 \note{We split by country, not by row, because rows from the same country across years are very similar and would leak information. Ridge alpha was tuned by cross-validation; the tree models used default settings.}
 
 \begin{frame}{Results: model comparison}
-  \begin{columns}[T]
-    \column{0.62\textwidth}
-    \centering\footnotesize\setlength{\tabcolsep}{4pt}
-    \begin{tabular}{lcccc}\toprule
-      \textbf{Model} & \textbf{CV RMSE} & \textbf{Test RMSE} & \textbf{MAE} & \textbf{$R^2$}\\\midrule
-      Baseline (mean) & -- & 9.95 & 7.98 & $-0.06$\\
-      Linear & 3.65 & 3.24 & 2.51 & 0.888\\
-      Ridge & 3.65 & 3.24 & 2.50 & 0.888\\
-      Random Forest & 3.00 & 2.65 & 1.93 & 0.925\\
-      Gradient Boosting & 3.01 & \textbf{2.59} & 1.95 & \textbf{0.928}\\\bottomrule
-    \end{tabular}
-    \column{0.38\textwidth}
-    \begin{itemize}\small
-      \item Best: \textbf{Gradient Boosting}, error cut by 74\% vs.\ baseline
-      \item Tree ensembles beat linear models by 18--20\%
-      \item RF and GB are nearly tied
-    \end{itemize}
-  \end{columns}
-  \vspace{0.15cm}
-  \centering
-  \includegraphics[width=0.86\textwidth]{figs/model_comparison.pdf}
+  \centering\small
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{lccccc}\toprule
+    \textbf{Model} & \textbf{Train RMSE} & \textbf{CV RMSE} & \textbf{Test RMSE} & \textbf{Test MAE} & \textbf{Test $R^2$}\\\midrule
+    Baseline (mean) & 9.43 & -- & 9.95 & 7.98 & $-0.06$\\
+    Linear Regression & 3.37 & 3.65 & 3.24 & 2.51 & 0.888\\
+    Ridge (tuned, $\alpha=10$) & 3.37 & 3.65 & 3.24 & 2.50 & 0.888\\
+    Random Forest & 0.64 & 3.00 & 2.65 & 1.93 & 0.925\\
+    Gradient Boosting & 1.85 & 3.01 & \textbf{2.59} & 1.95 & \textbf{0.928}\\\bottomrule
+  \end{tabular}
+  \vspace{0.35cm}
+  \begin{itemize}\small
+    \item Best: \textbf{Gradient Boosting} --- cuts test RMSE by \textbf{74\%} vs.\ baseline ($R^2 = 0.928$)
+    \item Tree ensembles beat linear models by \textbf{18--20\%} (2.59--2.65 vs.\ 3.24)
+    \item Random Forest and Gradient Boosting are nearly tied (within 0.06 years)
+  \end{itemize}
 \end{frame}
 \note{All models beat the baseline. Gradient Boosting has the lowest test error, but Random Forest is within 0.06 years and has a slightly lower cross-validation error, so we do not claim a clear winner. Test error is lower than CV error because the test set has only 37 countries.}
+
+\begin{frame}{Results: visual model comparison}
+  \centering
+  \includegraphics[width=\textwidth]{figs/model_comparison.pdf}
+  \vspace{0.3cm}
+  \begin{itemize}\small
+    \item Clear step-down in error from baseline $\to$ linear models $\to$ tree ensembles
+    \item Both tree ensembles explain over \textbf{92.5\%} of variance on unseen countries
+  \end{itemize}
+\end{frame}
+\note{Visualizing test RMSE, MAE and R-squared makes the gap between linear models and tree ensembles immediately clear.}
 
 \begin{frame}{Predicted vs.\ actual (Gradient Boosting)}
   \centering
@@ -175,20 +195,35 @@
 \end{frame}
 \note{Predictions follow the diagonal closely. The model is least accurate for the very lowest and highest life expectancies, where there are few countries.}
 
-\begin{frame}{Strongest predictors of life expectancy}
-  \begin{columns}[T]
-    \column{0.5\textwidth}
-    \centering\includegraphics[width=\textwidth,height=5.6cm,keepaspectratio]{figs/ridge_coefficients.pdf}
-    \column{0.5\textwidth}
-    \centering\includegraphics[width=\textwidth,height=5.6cm,keepaspectratio]{figs/rf_permutation_importance.pdf}
+\begin{frame}{Strongest predictors: Ridge regression}
+  \begin{columns}[c]
+    \column{0.62\textwidth}
+    \centering
+    \includegraphics[width=\textwidth,height=6.6cm,keepaspectratio]{figs/ridge_coefficients.pdf}
+    \column{0.38\textwidth}
+    \begin{itemize}\small
+      \item Strongest positive: \textbf{income composition} ($+4.40$), \textbf{status} ($+0.71$), immunizations
+      \item Strongest negative: \textbf{HIV/AIDS} ($-2.49$), \textbf{adult mortality} ($-1.82$)
+      \item Schooling's slight negative weight ($-0.20$) is due to overlap with income composition ($r=0.92$)
+    \end{itemize}
   \end{columns}
-  \vspace{0.05cm}
-  \begin{itemize}\footnotesize
-    \item Both models agree on the top 3: \textbf{income composition}, \textbf{HIV/AIDS}, \textbf{adult mortality}
-    \item Schooling's coefficient is slightly negative because it overlaps with income composition ($r=0.92$)
-  \end{itemize}
 \end{frame}
-\note{A linear model and a non-linear model rank the same three predictors first. The negative schooling coefficient is a collinearity effect, not evidence that education is harmful; its relationship with life expectancy is strongly positive on its own.}
+\note{Ridge shows both direction and size. The negative schooling coefficient is a collinearity effect, not evidence that education is harmful; its relationship with life expectancy is strongly positive on its own.}
+
+\begin{frame}{Strongest predictors: Random Forest importance}
+  \begin{columns}[c]
+    \column{0.62\textwidth}
+    \centering
+    \includegraphics[width=\textwidth,height=6.6cm,keepaspectratio]{figs/rf_permutation_importance.pdf}
+    \column{0.38\textwidth}
+    \begin{itemize}\small
+      \item Same top 3 predictors: \textbf{income composition} (0.371), \textbf{HIV/AIDS} (0.164), \textbf{adult mortality} (0.147)
+      \item All other features drop by an order of magnitude ($\le 0.015$)
+      \item Linear and tree models agree on what matters most
+    \end{itemize}
+  \end{columns}
+\end{frame}
+\note{Random Forest permutation importance measures the drop in test R-squared when a feature is shuffled, confirming the exact same top three predictors as Ridge.}
 
 \begin{frame}{Conclusion and implications}
   \begin{enumerate}
