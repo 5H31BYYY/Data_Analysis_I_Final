@@ -77,7 +77,7 @@ PHAUT Sovannvatanak (2026525) }\\[1.5cm]
 \end{center}
 \vspace{0.3cm}
 \noindent
-Life expectancy at birth is a core summary indicator of national health and socioeconomic development. This study analyzes the World Health Organization (WHO) Life Expectancy dataset (2000--2015; 2,938 raw records across 193 countries) to identify the strongest country-level predictors of longevity and evaluate predictive accuracy on unseen countries. After removing 10 missing-target rows, replacing implausible entries (including 629 out-of-range BMI values), applying country-then-status median imputation, and log-transforming nine right-skewed predictors, 2,928 records across 183 countries remained. Country-level exploratory analysis ($n = 183$) confirms a 12.09-year development gap (Developed 79.20 vs.\ Developing 67.11 years; Welch $t = 13.36$, $p < 0.001$, 95\% CI $[10.30, 13.88]$) that narrowed from 12.18 years in 2000 to 11.02 in 2015. Using an 80/20 country-grouped split (146 training, 37 test countries) and 5-fold grouped cross-validation across 18 predictors, four regression models were benchmarked against a mean baseline (test RMSE 9.95 years). Gradient Boosting achieved the lowest test RMSE of 2.59 years (MAE 1.95, $R^2 = 0.928$, a 74\% error reduction), with tree ensembles outperforming Linear and tuned Ridge regression ($\alpha = 10$) by 18--20\%. Both Ridge coefficients and Random Forest permutation importance identify \texttt{income\_composition\_of\_resources}, \texttt{hiv\_aids}, and \texttt{adult\_mortality} as the strongest predictors, though HDI-based and mortality overlap with the target precludes causal claims.
+\indent Life expectancy at birth is a core summary indicator of national health and socioeconomic development. This study analyzes the World Health Organization (WHO) Life Expectancy dataset (2000--2015; 2,938 raw records across 193 countries) to identify the strongest country-level predictors of longevity and evaluate predictive accuracy on unseen countries. After removing 10 missing-target rows, replacing implausible entries (including 629 out-of-range BMI values), applying country-then-status median imputation, and log-transforming nine right-skewed predictors, 2,928 records across 183 countries remained. Country-level exploratory analysis ($n = 183$) confirms a 12.09-year development gap (Developed 79.20 vs.\ Developing 67.11 years; Welch $t = 13.36$, $p < 0.001$, 95\% CI $[10.30, 13.88]$) that narrowed from 12.18 years in 2000 to 11.02 in 2015. Using an 80/20 country-grouped split (146 training, 37 test countries) and 5-fold grouped cross-validation across 18 predictors, four regression models were benchmarked against a mean baseline (test RMSE 9.95 years). Gradient Boosting achieved the lowest test RMSE of 2.59 years (MAE 1.95, $R^2 = 0.928$, a 74\% error reduction), with tree ensembles outperforming Linear and tuned Ridge regression ($\alpha = 10$) by 18--20\%. Both Ridge coefficients and Random Forest permutation importance identify \texttt{income\_composition\_of\_resources}, \texttt{hiv\_aids}, and \texttt{adult\_mortality} as the strongest predictors, though HDI-based and mortality overlap with the target precludes causal claims.
 
 \vspace{0.3cm}
 \hspace*{0.5in}\emph{Keywords:} life expectancy, exploratory data analysis, regression modeling, gradient boosting, random forest, WHO health indicators
@@ -88,7 +88,8 @@ Life expectancy at birth is a core summary indicator of national health and soci
   {\Large\bfseries Acknowledgments}
 \end{center}
 \vspace{0.3cm}
-We would like to express our sincere gratitude to our lecturer, \textbf{Dr.\ HAS Sothea}, for his guidance, clear instruction, and constructive feedback throughout \emph{Data Analysis I}. We also thank the \textbf{American University of Phnom Penh (AUPP)} for providing the academic environment and resources that supported the completion of this project. Finally, we acknowledge the World Health Organization (WHO) and the Kaggle data community for making the \emph{Life Expectancy (WHO)} dataset publicly available for research and educational use.
+\noindent
+\indent We would like to express our sincere gratitude to our lecturer, \textbf{Dr.\ HAS Sothea}, for his guidance, clear instruction, and constructive feedback throughout \emph{Data Analysis I}. We also thank the \textbf{American University of Phnom Penh (AUPP)} for providing the academic environment and resources that supported the completion of this project. Finally, we acknowledge the World Health Organization (WHO) and the Kaggle data community for making the \emph{Life Expectancy (WHO)} dataset publicly available for research and educational use.
 
 %==================== TABLE OF CONTENTS ====================
 \clearpage
@@ -101,12 +102,12 @@ We would like to express our sincere gratitude to our lecturer, \textbf{Dr.\ HAS
 %==================== I. INTRODUCTION ====================
 \section{Introduction}
 \subsection{Overview}
-Life expectancy at birth is one of the most widely used indicators of a country's overall health and development. It reflects not only the quality of healthcare, but also education, income, nutrition, and disease burden. Understanding which of these factors matter most helps governments and health organizations decide where to invest limited resources. This project analyzes the Life Expectancy (WHO) dataset from Kaggle, which combines health and socioeconomic indicators for about 190 countries from 2000 to 2015. The data contains both quantitative variables (such as adult mortality, immunization coverage, GDP, and schooling) and qualitative variables (such as country and development status). It also contains missing and invalid values, so careful cleaning is required before modeling. Using a data analysis pipeline of preprocessing, exploratory analysis, regression modeling, and evaluation, we identify the strongest drivers of life expectancy and assess how accurately it can be predicted.
+Life expectancy at birth is one of the most widely used indicators of a country's overall health and development. It reflects not only the quality of healthcare, but also education, income, nutrition, and disease burden. Understanding which of these factors matter most helps governments and health organizations decide where to invest limited resources. This project analyzes the Life Expectancy (WHO) dataset from Kaggle, which combines health and socioeconomic indicators for about 190 countries from 2000 to 2015. The data contains both quantitative variables (such as adult mortality, immunization coverage, GDP, and schooling) and qualitative variables (such as country and development status). It also contains missing and invalid values, so careful cleaning is required before modeling. Using a data analysis pipeline of preprocessing, exploratory analysis, regression modeling, and evaluation, we identify the strongest predictors of life expectancy and assess how accurately it can be predicted.
 
 \subsection{Objective}
 The primary objective of this project is to build and evaluate regression models
 that predict a country's life expectancy from health, economic and social
-indicators, and to identify which factors have the strongest influence.
+indicators, and to identify which factors are most strongly associated with it.
 
 The specific objectives are:
 \begin{enumerate}
@@ -117,8 +118,8 @@ The specific objectives are:
         analysis.
   \item Develop and compare several regression models against a baseline using
         RMSE, MAE and $R^2$.
-  \item Interpret the best model to determine the main drivers of life
-        expectancy and discuss their practical implications.
+  \item Interpret the linear and tree-based models to identify the strongest
+        predictors of life expectancy and discuss their practical implications.
 \end{enumerate}
 
 \subsection{Dataset Summary}
@@ -473,7 +474,7 @@ bmi & schooling & 0.727\\\bottomrule
 \item $H_2$: Developed countries have significantly higher life expectancy.
       \emph{Supported:} 79.20 vs.\ 67.11 years, a difference of 12.09 years
       (country-level Welch $t=13.36$, $p<0.001$, 95\% CI $[10.30, 13.88]$).
-\item $H_3$: Adult mortality has a strong negative effect.
+\item $H_3$: Adult mortality has a strong negative association with life expectancy.
       \emph{Supported:} $r=-0.70$ (Spearman $-0.65$); \texttt{hiv\_aids} is also strongly negative
       ($r=-0.56$, Spearman $-0.75$).
 \end{itemize}
@@ -642,8 +643,8 @@ errors suggest that some individual countries are consistently mis-predicted.
 \textbf{Ridge coefficients} (years of life expectancy per one standard deviation for scaled predictors
 --- on the $\log(1+x)$ scale for log-transformed features --- or for Developed vs.\ Developing for
 binary \texttt{status}, other features held constant) show that \texttt{income\_composition\_of\_resources}
-is by far the strongest positive effect ($+4.40$), followed by \texttt{status} (Developed, $+0.71$),
-\texttt{diphtheria} ($+0.52$) and \texttt{polio} ($+0.49$). The strongest negative effects are
+has by far the largest positive coefficient ($+4.40$), followed by \texttt{status} (Developed, $+0.71$),
+\texttt{diphtheria} ($+0.52$) and \texttt{polio} ($+0.49$). The largest negative coefficients are
 \texttt{hiv\_aids} ($-2.49$), \texttt{adult\_mortality} ($-1.82$) and \texttt{infant\_deaths} ($-0.71$).
 
 \textbf{Random Forest permutation importance} (drop in test $R^2$ when a feature is shuffled)
@@ -692,9 +693,10 @@ $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; 
 
 \subsection{Implications}
 \begin{itemize}
-  \item \textbf{Health ministries and development agencies:} the results point to reducing HIV/AIDS
-        and adult mortality, and to improving the broader economic and educational conditions
-        summarized by the resource-composition index, as the most promising levers.
+  \item \textbf{Health ministries and development agencies:} the observed associations point to
+        adult mortality, HIV/AIDS, and the broader economic and educational conditions summarized by
+        the resource-composition index as priority areas for public health focus (though
+        observational country-level data cannot establish causal effects).
   \item \textbf{International organizations (e.g.\ WHO):} the model can estimate life expectancy
         for countries with incomplete data and identify countries whose actual value is far from the
         prediction, which may deserve closer investigation.

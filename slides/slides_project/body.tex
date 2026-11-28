@@ -13,7 +13,7 @@
     \node (a) {Clean\\{\footnotesize missing, invalid}};
     \node[right=of a] (b) {Explore\\{\footnotesize EDA, correlations}};
     \node[right=of b] (c) {Model\\{\footnotesize 4 models + baseline}};
-    \node[right=of c] (d) {Interpret\\{\footnotesize drivers, errors}};
+    \node[right=of c] (d) {Interpret\\{\footnotesize predictors, errors}};
     \draw[-{Stealth},thick,aupp] (a)--(b); \draw[-{Stealth},thick,aupp] (b)--(c); \draw[-{Stealth},thick,aupp] (c)--(d);
   \end{tikzpicture}
 \end{frame}
@@ -127,7 +127,7 @@
     \textbf{Hypothesis} & \textbf{Evidence} & \textbf{Result}\\\midrule
     $H_1$: more schooling, longer life & $r=0.77$ (Spearman 0.81) & {\color{teal}$\checkmark$}\\
     $H_2$: Developed $>$ Developing & +12.1 years (country-level $t=13.4$, 95\% CI 10.3--13.9); GDP tier $F=78.9$ & {\color{teal}$\checkmark$}\\
-    $H_3$: adult mortality lowers life expectancy & $r=-0.70$; HIV/AIDS also strongly negative ($-0.56$) & {\color{teal}$\checkmark$}\\\bottomrule
+    $H_3$: higher adult mortality, shorter life & $r=-0.70$; HIV/AIDS also strongly negative ($-0.56$) & {\color{teal}$\checkmark$}\\\bottomrule
   \end{tabularx}
 \end{frame}
 \note{All three hypotheses are supported by the exploratory analysis. Later we check whether the models agree.}
@@ -234,11 +234,11 @@
   \end{enumerate}
   \vspace{0.2cm}
   \begin{block}{Implications}
-    \small Prioritize HIV/AIDS and adult mortality reduction and broad development; use the model to
-    estimate life expectancy where data are incomplete.
+    \small Associations highlight HIV/AIDS, adult mortality, and broad development as priority areas
+    (non-causal); use the model to estimate life expectancy where data are incomplete.
   \end{block}
 \end{frame}
-\note{The model predicts within about two years. For policy, the biggest levers are HIV/AIDS, adult mortality and the overall development level.}
+\note{The model predicts within about two years. For policy, the strongest associations highlight HIV/AIDS, adult mortality, and overall development as priority areas, though observational data cannot establish causation.}
 
 \begin{frame}{Limitations and future work}
   \begin{columns}[T]
