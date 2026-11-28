@@ -70,6 +70,28 @@ PHAUT Sovannvatanak (2026525) }\\[1.5cm]
 \clearpage
 \pagenumbering{roman}\setcounter{page}{1}
 \pagestyle{plain}
+
+%==================== ABSTRACT ====================
+\begin{center}
+  {\Large\bfseries Abstract}
+\end{center}
+\vspace{0.3cm}
+\noindent
+Life expectancy at birth is a core summary indicator of national health and socioeconomic development. This study analyzes the World Health Organization (WHO) Life Expectancy dataset (2000--2015; 2,938 raw records across 193 countries) to identify the strongest country-level predictors of longevity and evaluate predictive accuracy on unseen countries. After removing 10 missing-target rows, replacing implausible entries (including 629 out-of-range BMI values), applying country-then-status median imputation, and log-transforming nine right-skewed predictors, 2,928 records across 183 countries remained. Country-level exploratory analysis ($n = 183$) confirms a 12.09-year development gap (Developed 79.20 vs.\ Developing 67.11 years; Welch $t = 13.36$, $p < 0.001$, 95\% CI $[10.30, 13.88]$) that narrowed from 12.18 years in 2000 to 11.02 in 2015. Using an 80/20 country-grouped split (146 training, 37 test countries) and 5-fold grouped cross-validation across 18 predictors, four regression models were benchmarked against a mean baseline (test RMSE 9.95 years). Gradient Boosting achieved the lowest test RMSE of 2.59 years (MAE 1.95, $R^2 = 0.928$, a 74\% error reduction), with tree ensembles outperforming Linear and tuned Ridge regression ($\alpha = 10$) by 18--20\%. Both Ridge coefficients and Random Forest permutation importance identify \texttt{income\_composition\_of\_resources}, \texttt{hiv\_aids}, and \texttt{adult\_mortality} as the strongest predictors, though HDI-based and mortality overlap with the target precludes causal claims.
+
+\vspace{0.3cm}
+\hspace*{0.5in}\emph{Keywords:} life expectancy, exploratory data analysis, regression modeling, gradient boosting, random forest, WHO health indicators
+
+%==================== ACKNOWLEDGMENTS ====================
+\clearpage
+\begin{center}
+  {\Large\bfseries Acknowledgments}
+\end{center}
+\vspace{0.3cm}
+We would like to express our sincere gratitude to our lecturer, \textbf{Dr.\ HAS Sothea}, for his guidance, clear instruction, and constructive feedback throughout \emph{Data Analysis I}. We also thank the \textbf{American University of Phnom Penh (AUPP)} for providing the academic environment and resources that supported the completion of this project. Finally, we acknowledge the World Health Organization (WHO) and the Kaggle data community for making the \emph{Life Expectancy (WHO)} dataset publicly available for research and educational use.
+
+%==================== TABLE OF CONTENTS ====================
+\clearpage
 {\singlespacing\tableofcontents}
 \clearpage
 \setlength{\headheight}{15pt}
@@ -692,7 +714,7 @@ $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; 
         \texttt{measles} contain values that conflict with their documented units.
   \item \textbf{Ecological data:} the observations are country-level averages, so the results do
         not describe individuals, and correlation does not imply causation.
-  \item \textbf{Target overlap in \texttt{income\_composition\_of\_resources} and mortality predictors:}
+  \item \textbf{Target overlap in \texttt{income\_composition\_of\_resources} and mortality predictors:} \\ 
         \texttt{income\_composition\_of\_resources} is based on the UN Human Development Index (HDI),
         which incorporates life expectancy by construction, and mortality rates
         (\texttt{adult\_mortality}, \texttt{hiv\_aids}) are mechanically close to the target;
