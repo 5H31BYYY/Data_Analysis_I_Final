@@ -225,9 +225,9 @@ adult\_mortality & 10 & 0.34\\\bottomrule
 
 \textbf{Pattern of missingness.} The missing values are not spread randomly:
 \begin{itemize}
-  \item \texttt{population}: 48 of the 49 affected countries are missing in \emph{all}
-        16 years, so entire countries are absent from the source.
-  \item \texttt{gdp}: 30 of the 38 affected countries are missing in all years.
+  \item \texttt{population}: 48 of the 49 affected countries are missing in \emph{every}
+        year they appear, so entire countries are absent from the source.
+  \item \texttt{gdp}: 30 of the 38 affected countries are missing in every year they appear.
   \item \texttt{hepatitis\_b}: the number of missing rows falls steadily from 98 in 2000
         to 9 in 2015, and the missing rate is higher for Developed (33.8\%) than for
         Developing (15.7\%) countries.
@@ -249,7 +249,7 @@ The 10 rows with missing \texttt{life\_expectancy} are exactly the 10 rows with 
   \item \textbf{Why the median:} many of these variables are skewed
         (e.g.\ \texttt{gdp}, \texttt{population}, \texttt{hepatitis\_b}), so the median is
         more robust than the mean.
-  \item \textbf{Limitation:} for countries missing a variable in every year
+  \item \textbf{Limitation:} for countries missing a variable in every year they appear
         (48 for \texttt{population}, 30 for \texttt{gdp}) the country median does not exist,
         so the status median is used, which is a cruder estimate.
 \end{itemize}
@@ -347,8 +347,8 @@ group the train/test split. Including the two engineered features, the final cle
 Life expectancy has a mean of 69.22 years, a median of 72.1 and a standard deviation of 9.52,
 ranging from 36.3 to 89.0 years. The distribution is left-skewed (skewness $=-0.64$): most
 country-years lie between 63 and 76 years, with a long tail of low values. The two development
-groups differ strongly: Developed countries average 79.20 years (SD 3.93, 32 countries)
-while Developing countries average 67.11 years (SD 9.01, 151 countries).
+groups differ strongly: Developed countries average 79.20 years (row-level SD 3.93, 32 countries)
+while Developing countries average 67.11 years (row-level SD 9.01, 151 countries).
 
 Most predictors are strongly right-skewed (\texttt{measles}, \texttt{population}, \texttt{gdp},
 \texttt{infant\_deaths}, \texttt{hiv\_aids}), because a few large or severely affected countries
@@ -364,7 +364,10 @@ All histograms are shown in Figure~\ref{fig:hist} (Appendix~C).
 The four strongest linear relationships are \texttt{income\_composition\_of\_resources}
 ($r=0.86$), \texttt{schooling} ($r=0.77$), \texttt{bmi} ($r=0.73$) and
 \texttt{adult\_mortality} ($r=-0.70$). Higher resource-composition and schooling go together with
-longer lives, while higher adult mortality goes with shorter lives.
+longer lives, while higher adult mortality goes with shorter lives. The visible vertical stripes at
+\texttt{income\_composition\_of\_resources} $= 0.643$, \texttt{schooling} $= 11.7$ and
+\texttt{bmi} $= 38.7$ reflect Developing-group status medians imputed for missing or invalid rows
+rather than natural data clusters.
 
 \begin{figure}[H]\centering
 \includegraphics[width=0.7\textwidth]{figs/trend_by_year.pdf}
@@ -384,8 +387,8 @@ Because each of the 183 countries contributes 16 repeated yearly observations, t
 independent would inflate test statistics; we therefore ran inferential tests at the
 \emph{country level} ($n = 183$):
 \begin{itemize}
-  \item \textbf{Development status:} Developed countries ($n = 32$, mean 79.20, SD 3.22) live
-        12.09 years longer on average than Developing countries ($n = 151$, mean 67.11, SD 8.63);
+  \item \textbf{Development status:} Developed countries ($n = 32$, mean 79.20, country-level SD 3.22) live
+        12.09 years longer on average than Developing countries ($n = 151$, mean 67.11, country-level SD 8.63);
         country-level Welch $t = 13.36$, $\text{df} = 133.3$, $p < 0.001$, 95\% CI $[10.30, 13.88]$ years.
   \item \textbf{Time period:} Within-country average life expectancy rose by 3.74 years (SD 3.10)
         from 2000--04 to 2010--15 (paired $t = 16.32$, $\text{df} = 182$, $p < 0.001$).
@@ -478,7 +481,7 @@ was dropped: \texttt{under\_five\_deaths} ($r=0.997$ with \texttt{infant\_deaths
 \texttt{thinness\_5\_9\_years} ($r=0.939$ with \texttt{thinness\_1\_19\_years}).
 
 \begin{table}[H]\centering
-\caption{Variance inflation factors of the largest features (training set).}
+\caption{Variance inflation factors of the largest features (log-transformed training set).}
 \begin{tabular}{lr}\toprule
 \textbf{Feature} & \textbf{VIF}\\\midrule
 income\_composition\_of\_resources & 12.57\\
@@ -488,10 +491,12 @@ infant\_deaths & 3.04\\
 gdp & 2.82\\
 diphtheria & 2.43\\\bottomrule
 \end{tabular}\end{table}
-Only \texttt{income\_composition\_of\_resources} exceeds the common threshold of 10, and all
-remaining features not shown in the table are below 2.5. Both it and \texttt{schooling} were kept, since they are of
-substantive interest and Ridge and tree models tolerate collinearity, but their coefficients must
-be interpreted together.
+Whereas Table~7 reports raw correlations, VIFs were computed on the $\log(1+x)$-transformed
+training features (which reduces the collinearity between \texttt{gdp} and
+\texttt{percentage\_expenditure}). Only \texttt{income\_composition\_of\_resources} exceeds the
+common threshold of 10, and all remaining features not shown in the table are below 2.5. Both it
+and \texttt{schooling} were kept, since they are of substantive interest and Ridge and tree models
+tolerate collinearity, but their coefficients must be interpreted together.
 
 \newpage
 
@@ -563,15 +568,17 @@ Gradient Boosting & 1.8457 & 3.0064 & \textbf{2.5890} & 1.9495 & \textbf{0.9283}
         have a different mean than the training countries.
   \item \textbf{Ridge matches Linear Regression.} Their results differ by less than
         0.001 in RMSE, so regularization changes almost nothing here.
-  \item \textbf{Tree ensembles outperform linear models.} Gradient Boosting lowers
-        the test RMSE by about 20\% relative to Linear Regression (2.59 vs.\ 3.24) and
-        improves $R^2$ from 0.888 to 0.928. The CV RMSE shows the same gap
+  \item \textbf{Tree ensembles outperform linear models.} Tree ensembles lower the test RMSE
+        by 18--20\% relative to Linear Regression (20.1\% for Gradient Boosting, 2.59 vs.\ 3.24;
+        18.3\% for Random Forest, 2.65 vs.\ 3.24) and improve $R^2$ from 0.888 to 0.925--0.928.
+        The CV RMSE shows the same gap
         (about 3.0 vs.\ 3.65), confirming empirically that non-linear effects and interactions
         remain even after log-transforming skewed predictors such as \texttt{hiv\_aids} and
         \texttt{infant\_deaths}.
-  \item \textbf{Random Forest overfits more than Gradient Boosting.} Its training RMSE is
-        0.64, far below its CV RMSE of 3.00, while Gradient Boosting's training
-        RMSE is 1.85 against a CV RMSE of 3.01.
+  \item \textbf{Random Forest shows a larger train--CV gap than Gradient Boosting.} Its training
+        RMSE is 0.64 versus a CV RMSE of 3.00 (compared with 1.85 vs.\ 3.01 for Gradient Boosting).
+        This near-zero training error is expected for unpruned trees, and its CV and test scores
+        nearly match Gradient Boosting.
   \item \textbf{Gradient Boosting and Random Forest perform almost equally.}
         Gradient Boosting has the lowest test RMSE, but the gap to Random Forest is only 0.06 years
         and Random Forest has a slightly lower CV RMSE, so neither can be called clearly better.
@@ -618,10 +625,10 @@ is by far the strongest positive effect ($+4.40$), followed by \texttt{status} (
 \texttt{hiv\_aids} ($-2.49$), \texttt{adult\_mortality} ($-1.82$) and \texttt{infant\_deaths} ($-0.71$).
 
 \textbf{Random Forest permutation importance} (drop in test $R^2$ when a feature is shuffled)
-agrees on the top three: \texttt{income\_composition\_of\_resources} (0.371), \texttt{hiv\_aids} (0.164)
-and \texttt{adult\_mortality} (0.147). The next features, \texttt{bmi} (0.015) and
-\texttt{infant\_deaths} (0.008), are an order of magnitude smaller, and most remaining features
-contribute almost nothing once these are known.
+ranks the same top three predictors: \texttt{income\_composition\_of\_resources} (0.371),
+\texttt{hiv\_aids} (0.164), and \texttt{adult\_mortality} (0.147). The next features,
+\texttt{bmi} (0.015) and \texttt{infant\_deaths} (0.008), are an order of magnitude smaller, and
+most remaining features contribute almost nothing once these are known.
 
 \textbf{Schooling.} Although \texttt{schooling} is strongly correlated with life expectancy
 ($r=0.77$), its Ridge coefficient is slightly negative ($-0.20$) and its permutation importance is
@@ -632,7 +639,8 @@ together, and $H_1$ is supported by the correlation analysis rather than by the 
 
 \begin{table}[H]\centering
 \caption{Summary of the EDA hypotheses.}
-\begin{tabularx}{\textwidth}{lXl}\toprule
+\setlength{\tabcolsep}{8pt}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X l}\toprule
 \textbf{Hypothesis} & \textbf{Evidence} & \textbf{Result}\\\midrule
 $H_1:$ schooling $\uparrow$, life expectancy $\uparrow$ & $r=0.77$; overlaps with income composition in the models & Supported\\
 $H_2:$ Developed $>$ Developing & 12.09 years higher (country-level $t=13.36$, 95\% CI $[10.30, 13.88]$); Ridge $+0.71$ after controls & Supported\\
@@ -648,7 +656,7 @@ $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; 
         predicting the mean (RMSE 9.95).
   \item \textbf{Non-linear models fit better.} Tree ensembles beat Linear and Ridge Regression
         (test RMSE 2.59--2.65 vs.\ 3.24), in line with the non-linear patterns seen in the EDA.
-  \item \textbf{The main drivers are resource development and mortality.}
+  \item \textbf{The strongest predictors are resource development and mortality.}
         Income composition of resources ($r=0.86$) is the dominant predictor in both
         Ridge and Random Forest, followed by \texttt{hiv\_aids} and \texttt{adult\_mortality},
         both strongly negative.
@@ -674,16 +682,22 @@ $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; 
 
 \subsection{Limitations}
 \begin{itemize}
-  \item \textbf{Imputation:} \texttt{population} is missing for 22\% of rows (48 countries entirely)
-        and \texttt{gdp} for 15\%; the status median used for such countries is a rough estimate.
+  \item \textbf{Imputation and split order:} \texttt{population} is missing for 22\% of rows
+        (48 countries in every year they appear) and \texttt{gdp} for 15\%; the status median used
+        for such countries is a rough estimate. In addition, imputation was applied on the full
+        dataset before splitting, so the status-median fallback used test-set rows (while country
+        medians remain strictly within-country).
   \item \textbf{Data quality:} 629 \texttt{bmi} values were implausible, and the remaining
         values should be treated with caution. \texttt{percentage\_expenditure} and
         \texttt{measles} contain values that conflict with their documented units.
   \item \textbf{Ecological data:} the observations are country-level averages, so the results do
         not describe individuals, and correlation does not imply causation.
-  \item \textbf{Possible overlap of \texttt{income\_composition\_of\_resources} with the target:}
-        its definition is not fully documented; if it partly encodes health outcomes, its
-        importance may be overstated.
+  \item \textbf{Target overlap in \texttt{income\_composition\_of\_resources} and mortality predictors:}
+        \texttt{income\_composition\_of\_resources} is based on the UN Human Development Index (HDI),
+        which incorporates life expectancy by construction, and mortality rates
+        (\texttt{adult\_mortality}, \texttt{hiv\_aids}) are mechanically close to the target;
+        their importance therefore reflects strong predictive overlap rather than independent
+        causal drivers.
   \item \textbf{Evaluation:} results rely on a single country-based split with only 37 test countries,
         and Random Forest and Gradient Boosting were not tuned.
 \end{itemize}

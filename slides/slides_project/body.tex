@@ -46,7 +46,7 @@
     \textbf{\color{aupp}Missing values} (14 of 22 columns)
     \begin{itemize}\small
       \item Population 22\%, hepatitis B 19\%, GDP 15\%
-      \item Whole countries missing: population (48), GDP (30)
+      \item Missing every observed year: population (48), GDP (30)
       \item Hepatitis B gaps: 98 rows (2000) $\to$ 9 (2015), so MAR
       \item Imputed: country median, then status median
     \end{itemize}
@@ -154,7 +154,7 @@
     \column{0.38\textwidth}
     \begin{itemize}\small
       \item Best: \textbf{Gradient Boosting}, error cut by 74\% vs.\ baseline
-      \item Tree ensembles beat linear models by about 20\%
+      \item Tree ensembles beat linear models by 18--20\%
       \item RF and GB are nearly tied
     \end{itemize}
   \end{columns}
@@ -175,26 +175,26 @@
 \end{frame}
 \note{Predictions follow the diagonal closely. The model is least accurate for the very lowest and highest life expectancies, where there are few countries.}
 
-\begin{frame}{What drives life expectancy?}
+\begin{frame}{Strongest predictors of life expectancy}
   \begin{columns}[T]
-    \column{0.49\textwidth}
-    \centering\includegraphics[height=5.3cm]{figs/ridge_coefficients.pdf}
-    \column{0.49\textwidth}
-    \centering\includegraphics[height=5.3cm]{figs/rf_permutation_importance.pdf}
+    \column{0.5\textwidth}
+    \centering\includegraphics[width=\textwidth,height=5.6cm,keepaspectratio]{figs/ridge_coefficients.pdf}
+    \column{0.5\textwidth}
+    \centering\includegraphics[width=\textwidth,height=5.6cm,keepaspectratio]{figs/rf_permutation_importance.pdf}
   \end{columns}
-  \vspace{0.1cm}
+  \vspace{0.05cm}
   \begin{itemize}\footnotesize
     \item Both models agree on the top 3: \textbf{income composition}, \textbf{HIV/AIDS}, \textbf{adult mortality}
     \item Schooling's coefficient is slightly negative because it overlaps with income composition ($r=0.92$)
   \end{itemize}
 \end{frame}
-\note{A linear model and a non-linear model rank the same three drivers first. The negative schooling coefficient is a collinearity effect, not evidence that education is harmful; its relationship with life expectancy is strongly positive on its own.}
+\note{A linear model and a non-linear model rank the same three predictors first. The negative schooling coefficient is a collinearity effect, not evidence that education is harmful; its relationship with life expectancy is strongly positive on its own.}
 
 \begin{frame}{Conclusion and implications}
   \begin{enumerate}
     \item Life expectancy is predictable: test RMSE \textbf{2.59 years}, $R^2=0.93$
     \item Non-linear models fit better than linear ones
-    \item Main drivers: income composition, HIV/AIDS, adult mortality
+    \item Strongest predictors: income composition, HIV/AIDS, adult mortality
     \item Developed--Developing gap: 12 years, slowly narrowing
   \end{enumerate}
   \vspace{0.2cm}
@@ -210,11 +210,11 @@
     \column{0.5\textwidth}
     \textbf{\color{aupp}Limitations}
     \begin{itemize}\small
-      \item Imputation: whole countries missing population / GDP
+      \item Imputation before split (status fallback); missing pop.\ / GDP
       \item BMI unreliable (629 invalid rows)
       \item Country-level data; correlation $\neq$ causation
       \item Single split, 37 test countries; trees untuned
-      \item Income composition may overlap with the target
+      \item Income composition (HDI-based) partly encodes target
     \end{itemize}
     \column{0.5\textwidth}
     \textbf{\color{aupp}Future work}
