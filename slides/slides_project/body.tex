@@ -86,10 +86,10 @@
 
 \begin{frame}{EDA: the development gap}
   \centering
-  \includegraphics[width=1\textwidth]{figs/target_distribution.pdf}
+  \includegraphics[width=0.88\textwidth]{figs/target_distribution.pdf}
   \begin{itemize}\small
     \item Mean 69.2 years, SD 9.5, left-skewed: a long tail of low values
-    \item \textbf{Developed 79.2 vs.\ Developing 67.1} years (Welch $t=47.9$, $p<0.001$)
+    \item \textbf{Developed 79.2 vs.\ Developing 67.1} years (country-level Welch $t=13.4$, $p<0.001$, 95\% CI 10.3--13.9)
     \item Gap narrowed from 12.2 (2000) to 11.0 years (2015); Developing +5.1, Developed +3.9
   \end{itemize}
 \end{frame}
@@ -100,11 +100,11 @@
   \includegraphics[width=\textwidth]{figs/scatter_top4.pdf}
   \begin{itemize}\small
     \item Strongest: income composition ($r=0.86$), schooling (0.77), BMI (0.73), adult mortality ($-0.70$)
-    \item Spearman $\gg$ Pearson for infant deaths ($-0.60$ vs $-0.20$), HIV/AIDS ($-0.75$ vs $-0.56$), GDP $\Rightarrow$ \textbf{non-linear}
+    \item Spearman $\gg$ Pearson for infant deaths ($-0.60$ vs $-0.20$), HIV/AIDS ($-0.75$ vs $-0.56$), GDP $\Rightarrow$ \textbf{skewed / non-linear}
     \item Income composition and schooling overlap ($r=0.92$, VIF 12.6)
   \end{itemize}
 \end{frame}
-\note{The top four relationships are clear, but several variables relate to the target in a monotonic, non-linear way, which hints that tree models may do better than a straight line.}
+\note{The top four relationships are clear, while large Spearman-versus-Pearson gaps reflect heavy skewness and possible non-linearity, motivating both log transforms and testing tree models alongside linear regression.}
 
 \begin{frame}{EDA hypotheses}
   \centering\small
@@ -112,7 +112,7 @@
   \begin{tabularx}{\textwidth}{lXc}\toprule
     \textbf{Hypothesis} & \textbf{Evidence} & \textbf{Result}\\\midrule
     $H_1$: more schooling, longer life & $r=0.77$ (Spearman 0.81) & {\color{teal}$\checkmark$}\\
-    $H_2$: Developed $>$ Developing & +12.1 years; $t=47.9$; ANOVA by GDP tier $F=691$ & {\color{teal}$\checkmark$}\\
+    $H_2$: Developed $>$ Developing & +12.1 years (country-level $t=13.4$, 95\% CI 10.3--13.9); GDP tier $F=78.9$ & {\color{teal}$\checkmark$}\\
     $H_3$: adult mortality lowers life expectancy & $r=-0.70$; HIV/AIDS also strongly negative ($-0.56$) & {\color{teal}$\checkmark$}\\\bottomrule
   \end{tabularx}
 \end{frame}

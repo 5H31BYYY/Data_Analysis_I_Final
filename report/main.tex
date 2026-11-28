@@ -59,7 +59,7 @@
 \vspace{2cm}
 {\large\textbf{Course:} Data Analysis I\\[4pt]
 \textbf{Lecturer:} Dr.\ HAS Sothea\\[4pt]
-\textbf{Semester:} Fall 2027}\\[1.5cm]
+\textbf{Semester:} Fall 2026}\\[1.5cm]
 {\large\textbf{Team Members}\\[4pt]
 KHOV Seangngy (2026571) \\
 PHAUT Sovannvatanak (2026525) }\\[1.5cm]
@@ -378,12 +378,23 @@ Life expectancy rose in both groups between 2000 and 2015. Developed countries i
 \includegraphics[width=\textwidth]{figs/categorical_vs_target.pdf}
 \caption{Life expectancy by period (left) and GDP tier (right).}
 \end{figure}
-Mean life expectancy increases with GDP tier: 62.75 years (Low), 68.98 (Medium) and 75.95 (High),
-and with time: 67.26 (2000--04), 69.06 (2005--09) and 71.00 (2010--15). The group differences are
-statistically significant: Welch $t=47.87$ for status ($p<0.001$), ANOVA $F=39.70$ for period
-($p<0.001$) and $F=691.15$ for GDP tier ($p<0.001$). \texttt{status} and \texttt{income\_tier} are also
-strongly associated with each other ($\chi^2=592.75$, 2 df, $p<0.001$), so the two carry
-overlapping information.
+Mean life expectancy rises across country-year GDP tiers --- 62.75 years (Low), 68.98 (Medium)
+and 75.95 (High) --- and over time: 67.26 (2000--04), 69.06 (2005--09) and 71.00 (2010--15).
+Because each of the 183 countries contributes 16 repeated yearly observations, treating rows as
+independent would inflate test statistics; we therefore ran inferential tests at the
+\emph{country level} ($n = 183$):
+\begin{itemize}
+  \item \textbf{Development status:} Developed countries ($n = 32$, mean 79.20, SD 3.22) live
+        12.09 years longer on average than Developing countries ($n = 151$, mean 67.11, SD 8.63);
+        country-level Welch $t = 13.36$, $\text{df} = 133.3$, $p < 0.001$, 95\% CI $[10.30, 13.88]$ years.
+  \item \textbf{Time period:} Within-country average life expectancy rose by 3.74 years (SD 3.10)
+        from 2000--04 to 2010--15 (paired $t = 16.32$, $\text{df} = 182$, $p < 0.001$).
+  \item \textbf{GDP tier and overlap with status:} Grouping countries by mean GDP tertile
+        (Low: 62.03, Medium: 70.25, High: 76.74 years) confirms large group differences
+        (one-way ANOVA $F(2, 180) = 78.94$, $p < 0.001$). Country \texttt{status} and mean-GDP
+        tier are strongly associated ($\chi^2 = 70.54$, 2 df, $p < 0.001$), so the two carry
+        overlapping information.
+\end{itemize}
 
 \subsection{Correlation Analysis}
 \begin{figure}[H]\centering
@@ -409,11 +420,13 @@ infant\_deaths & $-0.197$ & $-0.599$\\
 population & $-0.029$ & $-0.088$\\\bottomrule
 \end{tabular}\end{table}
 
-\textbf{Non-linear relationships.} Spearman correlations are much larger than Pearson for
-\texttt{infant\_deaths} ($-0.20$ vs.\ $-0.60$), \texttt{under\_five\_deaths} ($-0.22$ vs.\ $-0.62$),
-\texttt{hiv\_aids} ($-0.56$ vs.\ $-0.75$) and \texttt{gdp} (0.45 vs.\ 0.63). These variables are
-related to life expectancy in a monotonic but non-linear way, which suggests that non-linear models
-may fit better than a straight line.
+\textbf{Skewed and non-linear relationships.} Spearman rank correlations are substantially larger
+in magnitude than Pearson correlations for \texttt{infant\_deaths} ($-0.60$ vs.\ $-0.20$),
+\texttt{under\_five\_deaths} ($-0.62$ vs.\ $-0.22$), \texttt{hiv\_aids} ($-0.75$ vs.\ $-0.56$)
+and \texttt{gdp} (0.63 vs.\ 0.45). Because Pearson is sensitive to extreme tails while Spearman
+uses ranks, these gaps reflect strong right-skewness, extreme values and/or curved monotonic
+relationships --- motivating both the $\log(1+x)$ transformation and testing non-linear tree
+models alongside linear regression.
 
 \textbf{Multicollinearity.} Several predictors are almost duplicates of each other:
 \begin{table}[H]\centering
@@ -434,7 +447,7 @@ bmi & schooling & 0.727\\\bottomrule
       \emph{Supported:} $r=0.77$ (Spearman 0.81).
 \item $H_2$: Developed countries have significantly higher life expectancy.
       \emph{Supported:} 79.20 vs.\ 67.11 years, a difference of 12.09 years
-      (Welch $t=47.87$, $p<0.001$).
+      (country-level Welch $t=13.36$, $p<0.001$, 95\% CI $[10.30, 13.88]$).
 \item $H_3$: Adult mortality has a strong negative effect.
       \emph{Supported:} $r=-0.70$ (Spearman $-0.65$); \texttt{hiv\_aids} is also strongly negative
       ($r=-0.56$, Spearman $-0.75$).
@@ -553,9 +566,9 @@ Gradient Boosting & 1.8457 & 3.0064 & \textbf{2.5890} & 1.9495 & \textbf{0.9283}
   \item \textbf{Tree ensembles outperform linear models.} Gradient Boosting lowers
         the test RMSE by about 20\% relative to Linear Regression (2.59 vs.\ 3.24) and
         improves $R^2$ from 0.888 to 0.928. The CV RMSE shows the same gap
-        (about 3.0 vs.\ 3.65), which suggests the relationships are partly non-linear, consistent
-        with the larger Spearman than Pearson correlations found in the EDA
-        (e.g.\ \texttt{hiv\_aids}, \texttt{infant\_deaths}).
+        (about 3.0 vs.\ 3.65), confirming empirically that non-linear effects and interactions
+        remain even after log-transforming skewed predictors such as \texttt{hiv\_aids} and
+        \texttt{infant\_deaths}.
   \item \textbf{Random Forest overfits more than Gradient Boosting.} Its training RMSE is
         0.64, far below its CV RMSE of 3.00, while Gradient Boosting's training
         RMSE is 1.85 against a CV RMSE of 3.01.
@@ -622,7 +635,7 @@ together, and $H_1$ is supported by the correlation analysis rather than by the 
 \begin{tabularx}{\textwidth}{lXl}\toprule
 \textbf{Hypothesis} & \textbf{Evidence} & \textbf{Result}\\\midrule
 $H_1:$ schooling $\uparrow$, life expectancy $\uparrow$ & $r=0.77$; overlaps with income composition in the models & Supported\\
-$H_2:$ Developed $>$ Developing & 12.09 years higher; Ridge coefficient $+0.71$ after controlling for other features & Supported\\
+$H_2:$ Developed $>$ Developing & 12.09 years higher (country-level $t=13.36$, 95\% CI $[10.30, 13.88]$); Ridge $+0.71$ after controls & Supported\\
 $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; third in permutation importance & Supported\\\bottomrule
 \end{tabularx}\end{table}
 
