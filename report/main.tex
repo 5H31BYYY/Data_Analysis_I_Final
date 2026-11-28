@@ -12,6 +12,7 @@
 \usepackage{fancyhdr}
 \usepackage{longtable}
 \usepackage{indentfirst}
+\usepackage{xurl}
 \usepackage[hidelinks]{hyperref}
 
 \definecolor{aupp}{HTML}{1F2A5C}
@@ -69,7 +70,7 @@ PHAUT Sovannvatanak (2026525) }\\[1.5cm]
 \clearpage
 \pagenumbering{roman}\setcounter{page}{1}
 \pagestyle{plain}
-\tableofcontents
+{\singlespacing\tableofcontents}
 \clearpage
 \setlength{\headheight}{15pt}
 \pagestyle{fancy}
@@ -105,7 +106,7 @@ The specific objectives are:
 \textbf{Item} & \textbf{Description}\\\midrule
 Source & Kaggle -- Life Expectancy (WHO) (Kumar Rajarshi), compiled from WHO and United Nations data. \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}\\
 Coverage & 193 countries, 2000--2015 (183 countries remain after cleaning); one row per country per year\\
-Size & 2938 rows $\times$ 22 columns (raw); 2928 rows $\times$ 24 columns (cleaned + 2 engineered for EDA)\\
+Size & 2938 rows $\times$ 22 columns (raw); 2928 rows $\times$ 24 columns (after cleaned, with 2 additional columns engineered for EDA)\\
 Target & \texttt{life\_expectancy} (years)\\
 Quantitative & 18 numeric predictors (plus target \texttt{life\_expectancy}), e.g.\ \texttt{adult\_mortality}, \texttt{bmi}, \texttt{gdp}, \texttt{schooling}\\
 Qualitative & \texttt{country}, \texttt{status} (Developed/Developing); \texttt{year} is ordinal; engineered: \texttt{period}, \texttt{income\_tier}\\
@@ -193,7 +194,7 @@ that the \texttt{(country, year)} pairs are unique. Therefore, no rows were remo
 %\end{lstlisting}
 
 \subsection{Missing Values}
-Fourteen of the 22 columns contain missing values. The most affected columns are
+14 of the 22 columns contain missing values. The most affected columns are
 \texttt{population} (22.19\%), \texttt{hepatitis\_b} (18.82\%) and \texttt{gdp}
 (15.25\%), while the target \texttt{life\_expectancy} is missing in only 10 rows (0.34\%).
 
@@ -298,7 +299,7 @@ The IQR method (1.5$\times$IQR) flagged many observations in right-skewed variab
 and \texttt{bmi} and \texttt{income\_composition\_of\_resources} have none.
 These values are genuine (large countries, epidemics, wealthy economies), so none were removed.
 Instead, features with skewness above 1.5 were log-transformed with $\log(1+x)$ before modeling.
-Boxplots of all numeric features are shown in Figure~\ref{fig:boxplots} (Appendix).
+Boxplots of all numeric features are shown in Figure~\ref{fig:boxplots} (Appendix~C).
 
 \begin{table}[H]\centering
 \caption{Skewness before and after the $\log(1+x)$ transform (features with skewness $>$ 1.5).}\label{tab:skew}
@@ -353,7 +354,7 @@ Most predictors are strongly right-skewed (\texttt{measles}, \texttt{population}
 \texttt{infant\_deaths}, \texttt{hiv\_aids}), because a few large or severely affected countries
 dominate, whereas immunization coverage (\texttt{hepatitis\_b}, \texttt{polio},
 \texttt{diphtheria}) is left-skewed with most countries above 90\%.
-All histograms are shown in Figure~\ref{fig:hist} (Appendix).
+All histograms are shown in Figure~\ref{fig:hist} (Appendix~C).
 
 \subsection{Bivariate Analysis}
 \begin{figure}[H]\centering
@@ -686,71 +687,118 @@ $H_3:$ adult mortality $\downarrow$ life expectancy & $r=-0.70$; Ridge $-1.82$; 
 \end{itemize}
 
 
-%==================== REFERENCES / APPENDIX ====================
-\section{References}
-\begin{enumerate}
-  \item Kumar Rajarshi. (n.d.). \emph{Life Expectancy (WHO)} [Data set]. Kaggle.
-        \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}
-  \item World Health Organization. \emph{Global Health Observatory data repository}
-        (original source of the health indicators).
-        \url{https://www.who.int/data/gho}
-  \item Hoerl, A.\ E., \& Kennard, R.\ W. (1970). Ridge regression: Biased estimation
-        for nonorthogonal problems. \emph{Technometrics}, 12(1), 55--67.
-  \item Breiman, L. (2001). Random forests. \emph{Machine Learning}, 45, 5--32.
-  \item Friedman, J.\ H. (2001). Greedy function approximation: A gradient boosting
-        machine. \emph{The Annals of Statistics}, 29(5), 1189--1232.
-  \item McKinney, W. (2010). Data structures for statistical computing in Python.
-        In \emph{Proceedings of the 9th Python in Science Conference} (pp.\ 56--61).
-  \item Harris, C.\ R., Millman, K.\ J., van der Walt, S.\ J., et al.\ (2020).
-        Array programming with NumPy. \emph{Nature}, 585, 357--362.
-  \item Hunter, J.\ D. (2007). Matplotlib: A 2D graphics environment.
-        \emph{Computing in Science \& Engineering}, 9(3), 90--95.
-  \item Waskom, M.\ L. (2021). seaborn: Statistical data visualization.
-        \emph{Journal of Open Source Software}, 6(60), 3021.
-  \item Virtanen, P., Gommers, R., Oliphant, T.\ E., et al.\ (2020). SciPy 1.0:
-        Fundamental algorithms for scientific computing in Python.
-        \emph{Nature Methods}, 17, 261--272.
-  \item Pedregosa, F., Varoquaux, G., Gramfort, A., et al.\ (2011). Scikit-learn:
-        Machine learning in Python. \emph{Journal of Machine Learning Research},
-        12, 2825--2830.
-\end{enumerate}
+%==================== REFERENCES (APA 7) ====================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
+\begin{center}
+  {\Large\bfseries References}
+\end{center}
+\vspace{0.4cm}
 
-\section{Appendix}
-\begin{enumerate}
-  \item Source code link: \url{https://github.com/5H31BYYY/Data_Analysis_I_Final}
-  \item Dataset link: \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}
-  \item Data dictionary (variable names after cleaning):
-  \begin{itemize}
-    \item \texttt{country} (qualitative): country name
-    \item \texttt{year} (ordinal): year of observation, 2000--2015
-    \item \texttt{status} (qualitative): Developed or Developing
-    \item \texttt{life\_expectancy} (quantitative, \textbf{target}): life expectancy at birth, in years
-    \item \texttt{adult\_mortality} (quantitative): adult mortality rate, both sexes, per 1000 population
-    \item \texttt{infant\_deaths} (quantitative): number of infant deaths per 1000 population
-    \item \texttt{alcohol} (quantitative): alcohol consumption per capita, in litres of pure alcohol
-    \item \texttt{percentage\_expenditure} (quantitative): health expenditure as \% of GDP per capita
-    \item \texttt{hepatitis\_b} (quantitative): Hepatitis B immunization coverage, \%
-    \item \texttt{measles} (quantitative): reported measles cases per 1000 population
-    \item \texttt{bmi} (quantitative): average body mass index of the population
-    \item \texttt{under\_five\_deaths} (quantitative): deaths under age five per 1000 population
-    \item \texttt{polio} (quantitative): polio immunization coverage, \%
-    \item \texttt{total\_expenditure} (quantitative): government health expenditure as \% of total government expenditure
-    \item \texttt{diphtheria} (quantitative): diphtheria (DTP3) immunization coverage, \%
-    \item \texttt{hiv\_aids} (quantitative): deaths per 1000 live births due to HIV/AIDS, ages 0--4
-    \item \texttt{gdp} (quantitative): gross domestic product per capita, in USD
-    \item \texttt{population} (quantitative): population of the country
-    \item \texttt{thinness\_1\_19\_years} (quantitative): prevalence of thinness among ages 10--19, \%
-    \item \texttt{thinness\_5\_9\_years} (quantitative): prevalence of thinness among ages 5--9, \%
-    \item \texttt{income\_composition\_of\_resources} (quantitative): income composition of resources, index from 0 to 1
-    \item \texttt{schooling} (quantitative): average years of schooling
-    \item \texttt{period} (qualitative, engineered): year grouped into 2000--04, 2005--09, 2010--15
-    \item \texttt{income\_tier} (qualitative, engineered): GDP tertile (Low, Medium, High)
-  \end{itemize}
-  \item Sample of the raw data (first 5 rows, selected columns):
-\end{enumerate}
+{\begingroup
+\raggedright
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+\setlength{\parskip}{6pt}
 
-\begin{table}[H]\centering
-\small
+Breiman, L. (2001). Random forests. \emph{Machine Learning}, \emph{45}(1), 5--32. \url{https://doi.org/10.1023/A:1010933404324}
+
+Friedman, J.\ H. (2001). Greedy function approximation: A gradient boosting machine. \emph{The Annals of Statistics}, \emph{29}(5), 1189--1232. \url{https://doi.org/10.1214/aos/1013203451}
+
+Harris, C.\ R., Millman, K.\ J., van der Walt, S.\ J., Gommers, R., Virtanen, P., Cournapeau, D., Wieser, E., Taylor, J., Berg, S., Smith, N.\ J., Kern, R., Picus, M., Hoyer, S., van Kerkwijk, M.\ H., Brett, M., Haldane, A., Fern\'andez del R\'io, J., Wiebe, M., Peterson, P., \ldots\ Oliphant, T.\ E. (2020). Array programming with NumPy. \emph{Nature}, \emph{585}(7825), 357--362. \url{https://doi.org/10.1038/s41586-020-2649-2}
+
+Hoerl, A.\ E., \& Kennard, R.\ W. (1970). Ridge regression: Biased estimation for nonorthogonal problems. \emph{Technometrics}, \emph{12}(1), 55--67. \url{https://doi.org/10.1080/00401706.1970.10488634}
+
+Hunter, J.\ D. (2007). Matplotlib: A 2D graphics environment. \emph{Computing in Science \& Engineering}, \emph{9}(3), 90--95. \url{https://doi.org/10.1109/MCSE.2007.55}
+
+McKinney, W. (2010). Data structures for statistical computing in Python. In S.\ van der Walt \& J.\ Millman (Eds.), \emph{Proceedings of the 9th Python in Science Conference} (pp.\ 56--61). \url{https://doi.org/10.25080/Majora-92bf1922-00a}
+
+Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., \& Duchesnay, \'E. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research}, \emph{12}(85), 2825--2830. \url{https://jmlr.org/papers/v12/pedregosa11a.html}
+
+Rajarshi, K. (n.d.). \emph{Life Expectancy (WHO)} [Data set]. Kaggle. \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}
+
+Virtanen, P., Gommers, R., Oliphant, T.\ E., Haberland, M., Reddy, T., Cournapeau, D., Burovski, E., Peterson, P., Weckesser, W., Bright, J., van der Walt, S.\ J., Brett, M., Wilson, J., Millman, K.\ J., Mayorov, N., Nelson, A.\ R.\ J., Jones, E., Kern, R., Larson, E., \ldots\ SciPy 1.0 Contributors. (2020). SciPy 1.0: Fundamental algorithms for scientific computing in Python. \emph{Nature Methods}, \emph{17}(3), 261--272. \url{https://doi.org/10.1038/s41592-019-0686-2}
+
+Waskom, M.\ L. (2021). seaborn: Statistical data visualization. \emph{Journal of Open Source Software}, \emph{6}(60), Article 3021. \url{https://doi.org/10.21105/joss.03021}
+
+World Health Organization. (n.d.). \emph{Global Health Observatory data repository} [Data set]. \url{https://www.who.int/data/gho}
+
+\par\endgroup}
+
+%==================== APPENDICES (APA 7) ====================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Appendix A: Source Code and Dataset Access}
+\begin{center}
+  {\Large\bfseries Appendix A}\\[4pt]
+  {\large\bfseries Source Code and Dataset Access}
+\end{center}
+\vspace{0.3cm}
+
+The complete Jupyter notebook (\texttt{life\_expectancy\_analysis.ipynb}), exported CSV summary tables, generated figures, LaTeX report source, and presentation slides are publicly available for reproducibility:
+\begin{itemize}
+  \item \textbf{Source code repository:} \url{https://github.com/5H31BYYY/Data_Analysis_I_Final}
+  \item \textbf{Original dataset (Kaggle):} \url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}
+\end{itemize}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Appendix B: Data Dictionary and Raw Data Sample}
+\begin{center}
+  {\Large\bfseries Appendix B}\\[4pt]
+  {\large\bfseries Data Dictionary and Raw Data Sample}
+\end{center}
+\vspace{0.3cm}
+
+\renewcommand{\thetable}{B\arabic{table}}
+\setcounter{table}{0}
+
+\refstepcounter{table}\label{tab:dict}
+\noindent\textbf{Table \thetable}\\
+\emph{Data Dictionary of Cleaned and Engineered Variables}
+
+\vspace{4pt}
+{\singlespacing\footnotesize\renewcommand{\arraystretch}{1.18}
+\noindent\begin{tabularx}{\textwidth}{l l X}\toprule
+\textbf{Variable} & \textbf{Type} & \textbf{Description}\\\midrule
+\texttt{country} & Qualitative & Country name\\
+\texttt{year} & Ordinal & Year of observation (2000--2015)\\
+\texttt{status} & Qualitative & Development status (Developed or Developing)\\
+\texttt{life\_expectancy} & Quantitative (target) & Life expectancy at birth, in years\\
+\texttt{adult\_mortality} & Quantitative & Adult mortality rate, both sexes, per 1,000 population\\
+\texttt{infant\_deaths} & Quantitative & Number of infant deaths per 1,000 population\\
+\texttt{alcohol} & Quantitative & Alcohol consumption per capita, in litres of pure alcohol\\
+\texttt{percentage\_expenditure} & Quantitative & Health expenditure as \% of GDP per capita\\
+\texttt{hepatitis\_b} & Quantitative & Hepatitis B immunization coverage (\%)\\
+\texttt{measles} & Quantitative & Reported measles cases per 1,000 population\\
+\texttt{bmi} & Quantitative & Average body mass index of the population\\
+\texttt{under\_five\_deaths} & Quantitative & Deaths under age five per 1,000 population\\
+\texttt{polio} & Quantitative & Polio immunization coverage (\%)\\
+\texttt{total\_expenditure} & Quantitative & Government health expenditure as \% of total government expenditure\\
+\texttt{diphtheria} & Quantitative & Diphtheria (DTP3) immunization coverage (\%)\\
+\texttt{hiv\_aids} & Quantitative & Deaths per 1,000 live births due to HIV/AIDS, ages 0--4\\
+\texttt{gdp} & Quantitative & Gross domestic product per capita, in USD\\
+\texttt{population} & Quantitative & Total population of the country\\
+\texttt{thinness\_1\_19\_years} & Quantitative & Prevalence of thinness among ages 10--19 (\%)\\
+\texttt{thinness\_5\_9\_years} & Quantitative & Prevalence of thinness among ages 5--9 (\%)\\
+\texttt{income\_composition\_of\_resources} & Quantitative & Human Development Index in terms of income composition (0--1)\\
+\texttt{schooling} & Quantitative & Average years of schooling\\
+\texttt{period} & Qualitative (engineered) & Year grouped into 2000--04, 2005--09, and 2010--15 (EDA only)\\
+\texttt{income\_tier} & Qualitative (engineered) & GDP per capita tertile: Low, Medium, High (EDA only)\\\bottomrule
+\end{tabularx}\par}
+\vspace{4pt}
+\noindent{\small\emph{Note.} All column names were standardized to snake\_case during preprocessing. \texttt{period} and \texttt{income\_tier} were engineered for exploratory analysis only and excluded from regression modeling.}
+
+\vspace{0.7cm}
+
+\noindent\begin{minipage}{\textwidth}
+\refstepcounter{table}\label{tab:rawsample}
+\noindent\textbf{Table \thetable}\\
+\emph{Sample of the Raw Dataset (First Five Observations, Selected Columns)}
+\vspace{4pt}
+\begin{center}
+\singlespacing\small
 \begin{tabular}{lcclccr}\toprule
 \textbf{Country} & \textbf{Year} & \textbf{Status} & \textbf{Life exp.} & \textbf{Adult mort.} & \textbf{Schooling} & \textbf{Income comp.}\\\midrule
 Afghanistan & 2015 & Developing & 65.0 & 263 & 10.1 & 0.479\\
@@ -758,16 +806,44 @@ Afghanistan & 2014 & Developing & 59.9 & 271 & 10.0 & 0.476\\
 Afghanistan & 2013 & Developing & 59.9 & 268 & 9.9 & 0.470\\
 Afghanistan & 2012 & Developing & 59.5 & 272 & 9.8 & 0.463\\
 Afghanistan & 2011 & Developing & 59.2 & 275 & 9.5 & 0.454\\\bottomrule
-\end{tabular}\end{table}
+\end{tabular}
+\end{center}
+\vspace{2pt}
+\noindent{\small\emph{Note.} Adapted from \emph{Life Expectancy (WHO)} [Data set], by K.\ Rajarshi, n.d., Kaggle (\url{https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who}). Life exp.\ = life expectancy (years); Adult mort.\ = adult mortality per 1,000 population; Income comp.\ = income composition of resources.}
+\end{minipage}
 
-\subsection*{Supplementary figures}
-\begin{figure}[H]\centering
-\includegraphics[width=\textwidth]{figs/histograms_numeric.pdf}
-\caption{Histograms of numeric predictors (excluding \texttt{year} and target; after cleaning).}\label{fig:hist}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Appendix C: Supplementary Exploratory Figures}
+\begin{center}
+  {\Large\bfseries Appendix C}\\[4pt]
+  {\large\bfseries Supplementary Exploratory Figures}
+\end{center}
+\vspace{0.3cm}
+
+\renewcommand{\thefigure}{C\arabic{figure}}
+\setcounter{figure}{0}
+
+\begin{figure}[H]
+\refstepcounter{figure}\label{fig:hist}
+\noindent\textbf{Figure \thefigure}\\
+\emph{Histograms of Numeric Predictors After Cleaning}\par
+\vspace{6pt}
+{\centering\includegraphics[width=\textwidth]{figs/histograms_numeric.pdf}\par}
+\vspace{4pt}
+\noindent{\small\emph{Note.} Distributions of the 18 numeric predictors after invalid-value replacement and median imputation (excluding \texttt{year} and the target variable \texttt{life\_expectancy}).}
 \end{figure}
-\begin{figure}[H]\centering
-\includegraphics[width=\textwidth]{figs/boxplots_numeric.pdf}
-\caption{Boxplots of numeric features (excluding \texttt{year}; after cleaning).}\label{fig:boxplots}
+
+\vspace{0.6cm}
+
+\begin{figure}[H]
+\refstepcounter{figure}\label{fig:boxplots}
+\noindent\textbf{Figure \thefigure}\\
+\emph{Boxplots of Numeric Features After Cleaning}\par
+\vspace{6pt}
+{\centering\includegraphics[width=\textwidth]{figs/boxplots_numeric.pdf}\par}
+\vspace{4pt}
+\noindent{\small\emph{Note.} Boxplots of the 18 numeric predictors and target variable \texttt{life\_expectancy} after imputation (excluding \texttt{year}), illustrating right-skewed distributions with genuine extreme observations.}
 \end{figure}
 
 \end{document}
